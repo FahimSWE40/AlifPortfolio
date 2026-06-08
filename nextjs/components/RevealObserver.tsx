@@ -10,10 +10,6 @@ export function RevealObserver() {
 
     html.classList.add('reveal-armed');
 
-    const revealEls = Array.from(document.querySelectorAll<HTMLElement>('.reveal'));
-    const countEls  = Array.from(document.querySelectorAll<HTMLElement>('[data-count]'));
-    const fillEls   = Array.from(document.querySelectorAll<HTMLElement>('.skill-fill, .case-bar i'));
-
     function inView(el: Element, ratio = 0.10) {
       const r = el.getBoundingClientRect();
       return r.top < window.innerHeight * (1 - ratio) && r.bottom > 0;
@@ -39,6 +35,10 @@ export function RevealObserver() {
     }
 
     function checkAll() {
+      const revealEls = document.querySelectorAll<HTMLElement>('.reveal');
+      const countEls  = document.querySelectorAll<HTMLElement>('[data-count]');
+      const fillEls   = document.querySelectorAll<HTMLElement>('.skill-fill, .case-bar i');
+
       revealEls.forEach(el => { if (!el.classList.contains('in') && inView(el)) el.classList.add('in'); });
       countEls.forEach(el  => { if (!(el as any)._done && inView(el, 0.30)) animateCount(el); });
       fillEls.forEach(el   => {
@@ -84,6 +84,10 @@ export function RevealObserver() {
         let t1: number;
         try { t1 = (document.timeline.currentTime as number) ?? 0; } catch { t1 = performance.now(); }
         if (t1 - t0 < 5) {
+          const revealEls = document.querySelectorAll<HTMLElement>('.reveal');
+          const countEls  = document.querySelectorAll<HTMLElement>('[data-count]');
+          const fillEls   = document.querySelectorAll<HTMLElement>('.skill-fill, .case-bar i');
+
           html.classList.add('force-shown');
           revealEls.forEach(el => el.classList.add('in'));
           fillEls.forEach(el => {

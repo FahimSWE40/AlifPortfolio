@@ -8,7 +8,7 @@ export function Cases() {
             <h2 className="section-title">Recent <span className="grad">Success Stories</span></h2>
           </div>
           <a href="#" className="btn btn-ghost" data-magnetic="">
-            View All Projects{' '}
+            View All Campaigns{' '}
             <span className="ico">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none">
                 <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -18,7 +18,7 @@ export function Cases() {
         </div>
 
         <div className="cases">
-          {/* ── Case 1 — Health Supplement ── */}
+          {/* ── Case 1 — CPA Campaign ── */}
           <article className="case reveal">
             <div className="case-top">
               <div className="case-badge">
@@ -36,21 +36,17 @@ export function Cases() {
             <div className="case-thumb">
               <div className="browser">
                 <i /><i /><i />
-                <span className="case-url">healthoffer.io/landing</span>
+                <span className="case-url">nutrapeak.com/funnel</span>
               </div>
               <div className="mock" style={{ background: 'linear-gradient(160deg,#0d2b1e,#06140d)' }}>
                 <svg width="100%" height="100%" viewBox="0 0 300 156" preserveAspectRatio="xMidYMid slice">
                   <rect width="300" height="156" fill="#0c241a" />
-                  <rect x="20" y="20" width="130" height="10" rx="3" fill="#1f6b4d" />
-                  <rect x="20" y="38" width="95" height="7" rx="3" fill="#13402f" />
-                  <rect x="20" y="54" width="75" height="7" rx="3" fill="#0d2b1e" />
+                  <rect x="20" y="20" width="120" height="10" rx="3" fill="#1f6b4d" />
+                  <rect x="20" y="38" width="90" height="7" rx="3" fill="#13402f" />
                   <rect x="20" y="76" width="108" height="32" rx="6" fill="#00F5B8" opacity=".88" />
-                  <text x="36" y="96" fill="#03110c" fontSize="11" fontWeight="700" fontFamily="sans-serif">View Offer →</text>
-                  <circle cx="226" cy="80" r="46" fill="#0f3326" />
-                  <circle cx="226" cy="80" r="46" fill="none" stroke="#00F5B8" strokeWidth="1.5" opacity=".3" />
-                  <rect x="205" y="48" width="42" height="64" rx="10" fill="#1f8f64" />
-                  <rect x="213" y="56" width="26" height="4" rx="2" fill="#00F5B8" opacity=".5" />
-                  <rect x="213" y="64" width="18" height="4" rx="2" fill="#00F5B8" opacity=".3" />
+                  <text x="44" y="96" fill="#03110c" fontSize="11" fontWeight="700" fontFamily="sans-serif">Launch →</text>
+                  <circle cx="225" cy="80" r="42" fill="#0f3326" />
+                  <rect x="205" y="50" width="40" height="60" rx="10" fill="#1f8f64" />
                 </svg>
               </div>
             </div>
@@ -71,7 +67,7 @@ export function Cases() {
             <div className="case-bar"><i data-fill="92" /></div>
           </article>
 
-          {/* ── Case 2 — Finance Lead Gen ── */}
+          {/* ── Case 2 — CPL Campaign ── */}
           <article className="case o reveal d1">
             <div className="case-top">
               <div className="case-badge">
@@ -88,22 +84,17 @@ export function Cases() {
             <div className="case-thumb">
               <div className="browser">
                 <i /><i /><i />
-                <span className="case-url">finleads.co/funnel</span>
+                <span className="case-url">finedge.com/leadgen</span>
               </div>
               <div className="mock" style={{ background: 'linear-gradient(160deg,#102036,#060d18)' }}>
                 <svg width="100%" height="100%" viewBox="0 0 300 156" preserveAspectRatio="xMidYMid slice">
                   <rect width="300" height="156" fill="#0a1626" />
-                  <rect x="20" y="22" width="155" height="11" rx="3" fill="#2a6fdb" />
-                  <rect x="20" y="40" width="110" height="7" rx="3" fill="#16314f" />
-                  <rect x="20" y="54" width="80" height="7" rx="3" fill="#0e2236" />
-                  <rect x="20" y="72" width="90" height="28" rx="6" fill="#FF7A18" opacity=".88" />
-                  <text x="32" y="90" fill="#fff" fontSize="10" fontWeight="700" fontFamily="sans-serif">Get Free Quote</text>
-                  <rect x="190" y="28" width="92" height="70" rx="8" fill="#10243d" />
-                  <path d="M198 88l16-18 14 10 20-28" stroke="#2a6fdb" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-                  <circle cx="198" cy="88" r="3" fill="#2a6fdb" />
-                  <circle cx="214" cy="70" r="3" fill="#2a6fdb" />
-                  <circle cx="228" cy="80" r="3" fill="#2a6fdb" />
-                  <circle cx="248" cy="52" r="3" fill="#2a6fdb" />
+                  <rect x="20" y="22" width="150" height="11" rx="3" fill="#2a6fdb" />
+                  <rect x="20" y="42" width="110" height="7" rx="3" fill="#16314f" />
+                  <rect x="20" y="72" width="86" height="28" rx="6" fill="#FF7A18" opacity=".85" />
+                  <text x="32" y="90" fill="#fff" fontSize="10" fontWeight="700" fontFamily="sans-serif">Leads →</text>
+                  <rect x="190" y="44" width="90" height="62" rx="8" fill="#10243d" />
+                  <path d="M198 90l16-14 12 8 18-22" stroke="#2a6fdb" strokeWidth="3" fill="none" strokeLinecap="round" />
                 </svg>
               </div>
             </div>
@@ -124,7 +115,7 @@ export function Cases() {
             <div className="case-bar"><i data-fill="84" /></div>
           </article>
 
-          {/* ── Case 3 — E-commerce ── */}
+          {/* ── Case 3 — Sales Campaign ── */}
           <article className="case reveal d2">
             <div className="case-top">
               <div className="case-badge">
@@ -144,21 +135,19 @@ export function Cases() {
             <div className="case-thumb">
               <div className="browser">
                 <i /><i /><i />
-                <span className="case-url">shopboost.io/products</span>
+                <span className="case-url">audiowave.com/shop</span>
               </div>
               <div className="mock" style={{ background: 'linear-gradient(160deg,#15171c,#070809)' }}>
                 <svg width="100%" height="100%" viewBox="0 0 300 156" preserveAspectRatio="xMidYMid slice">
                   <rect width="300" height="156" fill="#101216" />
                   <rect x="20" y="22" width="120" height="10" rx="3" fill="#2a2d36" />
                   <rect x="20" y="40" width="85" height="7" rx="3" fill="#1c1f26" />
-                  <circle cx="150" cy="90" r="48" fill="#181b22" />
-                  <circle cx="150" cy="90" r="48" fill="none" stroke="#00F5B8" strokeWidth="1.8" opacity=".35" />
-                  <circle cx="150" cy="90" r="36" fill="#1e2230" />
-                  <rect x="126" y="66" width="48" height="48" rx="22" fill="#272b38" />
-                  <rect x="138" y="54" width="24" height="18" rx="4" fill="#2e3244" />
-                  <text x="134" y="95" fill="#00F5B8" fontSize="12" fontWeight="700" fontFamily="sans-serif" opacity=".7">$60K</text>
-                  <rect x="22" y="120" width="60" height="22" rx="6" fill="#00F5B8" opacity=".85" />
-                  <text x="32" y="135" fill="#03110c" fontSize="9" fontWeight="700" fontFamily="sans-serif">Buy Now</text>
+                  <circle cx="150" cy="90" r="40" fill="#1c1f26" />
+                  <circle cx="150" cy="90" r="40" fill="none" stroke="#00F5B8" strokeWidth="2" opacity=".4" />
+                  <rect x="124" y="70" width="52" height="40" rx="20" fill="#23272f" />
+                  <rect x="146" y="56" width="8" height="20" rx="4" fill="#33373f" />
+                  <rect x="22" y="112" width="60" height="22" rx="6" fill="#00F5B8" opacity=".85" />
+                  <text x="32" y="127" fill="#03110c" fontSize="9" fontWeight="700" fontFamily="sans-serif">Explore</text>
                 </svg>
               </div>
             </div>

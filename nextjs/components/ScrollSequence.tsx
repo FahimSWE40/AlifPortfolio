@@ -13,7 +13,7 @@ import {
    Config
 ══════════════════════════════════════════════════════════════ */
 const TOTAL  = 76;
-const BG     = '#0c0c0c';
+const BG     = '#121212';
 const HEIGHT = '500vh';
 
 function framePath(i: number) {
@@ -30,12 +30,14 @@ function TextLayer({
   scrollYProgress,
   visibleRange,
   driftPx = 70,
+  className = '',
   style,
   children,
 }: {
   scrollYProgress: MotionValue<number>;
   visibleRange: [number, number];
   driftPx?: number;
+  className?: string;
   style?: CSSProperties;
   children: React.ReactNode;
 }) {
@@ -48,6 +50,7 @@ function TextLayer({
   const y = useTransform(scrollYProgress, [enter, exit], [18, -driftPx]);
   return (
     <motion.div
+      className={className}
       style={{ position: 'absolute', zIndex: 10, pointerEvents: 'none', opacity, y, ...style }}
     >
       {children}
@@ -156,7 +159,7 @@ export function ScrollSequence() {
   const pct = Math.round((loadedCount / TOTAL) * 100);
 
   return (
-    <section ref={wrapRef} style={{ height: HEIGHT }} className="relative">
+    <section ref={wrapRef} style={{ height: HEIGHT, padding: 0 }} className="relative">
 
       {/* Sticky viewport — fades out at end of 500vh scroll */}
       <motion.div
@@ -264,11 +267,12 @@ export function ScrollSequence() {
           </div>
         </TextLayer>
 
-        {/* LAYER 1 — Left: "I build digital experiences." */}
+        {/* LAYER 1 — Left: "I scale brand revenue." */}
         <TextLayer
           scrollYProgress={scrollYProgress}
           visibleRange={[0.28, 0.86]}
           driftPx={56}
+          className="seq-text-left"
           style={{ bottom: '34vh', left: '5vw', maxWidth: 'min(42vw, 520px)' }}
         >
           <p
@@ -279,9 +283,9 @@ export function ScrollSequence() {
               textShadow: '0 2px 32px rgba(0,0,0,0.75)',
             }}
           >
-            I build<br />
-            <span style={{ color: '#00F5B8' }}>digital</span>{' '}
-            experiences.
+            I scale<br />
+            <span style={{ color: '#00F5B8' }}>brand</span>{' '}
+            revenue.
           </p>
         </TextLayer>
 
@@ -319,17 +323,19 @@ export function ScrollSequence() {
               fontSize: 'clamp(11px, 1.35vw, 18px)',
               color: 'rgba(255,255,255,0.36)',
               marginTop: '0.55em',
+              textShadow: '0 2px 8px rgba(0,0,0,0.5)',
             }}
           >
             Affiliate Marketer.
           </p>
         </TextLayer>
 
-        {/* LAYER 3 — Right: "Bridging design and engineering." */}
+        {/* LAYER 3 — Right: "Turning clicks into customers." */}
         <TextLayer
           scrollYProgress={scrollYProgress}
           visibleRange={[0.62, 0.90]}
           driftPx={126}
+          className="seq-text-right"
           style={{
             bottom: '7vh',
             right: '5vw',
@@ -345,8 +351,8 @@ export function ScrollSequence() {
               textShadow: '0 2px 32px rgba(0,0,0,0.75)',
             }}
           >
-            Bridging brands<br />
-            <span style={{ color: '#FF7A18' }}>and performance.</span>
+            Turning clicks<br />
+            <span style={{ color: '#FF7A18' }}>into customers.</span>
           </p>
         </TextLayer>
 

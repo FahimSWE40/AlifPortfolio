@@ -39,7 +39,7 @@ export function About() {
                   </svg>
                 </div>
                 <div className="k">Profession</div>
-                <div className="v">Affiliate Marketer</div>
+                <div className="v">Performance Marketer</div>
               </div>
               <div className="info-row">
                 <div className="ico">

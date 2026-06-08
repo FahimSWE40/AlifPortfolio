@@ -47,9 +47,9 @@ export function Hero() {
             </svg>
             Welcome to my Portfolio
           </span>
-          <h1 className="reveal d1"><span className="green">Alif</span>Hosain</h1>
+          <h1 className="reveal d1"><span className="green">Alif</span> Hosain</h1>
           <div className="role reveal d2">Affiliate Marketer</div>
-          <p className="desc reveal d2">I help brands scale revenue through high-converting affiliate marketing strategies, performance funnels, traffic generation, and conversion optimization. Let&apos;s turn clicks into customers.</p>
+          <p className="desc reveal d2">I help brands scale revenue through high-converting affiliate marketing strategies, performance funnels, traffic generation, and conversion optimization. Let's turn clicks into customers.</p>
           <div className="hero-actions reveal d3">
             <a href="#cases" className="btn btn-primary" data-magnetic="">
               View My Work{' '}
@@ -79,7 +79,7 @@ export function Hero() {
               <a className="social" href="#" aria-label="Instagram">
                 <svg viewBox="0 0 24 24" width="19" height="19" fill="none">
                   <rect x="3.5" y="3.5" width="17" height="17" rx="5" stroke="currentColor" strokeWidth="1.8" />
-                  <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="1.8" />
+                  <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.8" />
                   <circle cx="17" cy="7" r="1.2" fill="currentColor" />
                 </svg>
               </a>
@@ -96,7 +96,7 @@ export function Hero() {
             </div>
           </div>
         </div>
-
+ 
         <div className="hero-visual reveal d2">
           <div className="portrait-stage" id="portraitStage" ref={stageRef}>
             <div className="halo" data-depth="0.3" />
@@ -126,7 +126,7 @@ export function Hero() {
           </div>
         </div>
       </div>
-
+ 
       <div className="stats-wrap reveal">
         <div className="stats">
           <div className="stat">
