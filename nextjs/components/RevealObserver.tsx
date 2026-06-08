@@ -10,9 +10,9 @@ export function RevealObserver() {
 
     html.classList.add('reveal-armed');
 
-    const revealEls = [...document.querySelectorAll<HTMLElement>('.reveal')];
-    const countEls  = [...document.querySelectorAll<HTMLElement>('[data-count]')];
-    const fillEls   = [...document.querySelectorAll<HTMLElement>('.skill-fill, .case-bar i')];
+    const revealEls = Array.from(document.querySelectorAll<HTMLElement>('.reveal'));
+    const countEls  = Array.from(document.querySelectorAll<HTMLElement>('[data-count]'));
+    const fillEls   = Array.from(document.querySelectorAll<HTMLElement>('.skill-fill, .case-bar i'));
 
     function inView(el: Element, ratio = 0.10) {
       const r = el.getBoundingClientRect();

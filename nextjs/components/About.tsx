@@ -1,86 +1,81 @@
 export function About() {
   return (
-    <section id="about" className="about">
-      <div className="container">
+    <section id="about">
+      <div className="container about">
         <div className="about-grid">
-          <div>
-            <span className="eyebrow reveal">About Me</span>
-            <h2 className="reveal d1">
-              Elite <span className="green">Affiliate</span> Marketer
-            </h2>
-            <p className="reveal d2">
-              With over 3 years in affiliate marketing, I specialise in performance-driven campaigns that turn traffic into revenue. From ClickBank health offers to SaaS B2B programs, I&apos;ve managed high-ROI funnels across every major niche.
-            </p>
-            <p className="reveal d2">
-              My approach blends data-driven traffic analysis, conversion rate optimisation, and compelling copywriting to build systems that scale — not one-time spikes.
-            </p>
-            <div className="signature reveal d3">
-              <div className="sig">Alif Hosain</div>
-              <div className="nm">SK Alif Hosain</div>
-              <div className="pf">Affiliate Marketer &amp; Growth Strategist</div>
-            </div>
+          <div className="reveal">
+            <span className="eyebrow">About Me</span>
+            <h2>Who <span className="green">I Am</span></h2>
+            <p>Results-driven affiliate marketer with a passion for performance marketing, traffic strategies, and conversion optimization. I partner with brands to scale their online presence and maximize ROI through data-backed strategies.</p>
+            <p>Every campaign I build is engineered around one principle: measurable growth. From first impression to final conversion, I obsess over the numbers that move revenue.</p>
+            <a href="#footer" className="btn btn-ghost" data-magnetic="" style={{ marginTop: 8 }}>
+              More About Me{' '}
+              <span className="ico">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none">
+                  <circle cx="12" cy="8" r="3.2" stroke="currentColor" strokeWidth="1.8" />
+                  <path d="M5 20a7 7 0 0 1 14 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                </svg>
+              </span>
+            </a>
           </div>
 
           <div className="reveal d2">
             <div className="info-card">
-              {[
-                {
-                  icon: (
-                    <svg viewBox="0 0 24 24" fill="none">
-                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                      <circle cx="12" cy="7" r="4" stroke="currentColor" strokeWidth="2" />
-                    </svg>
-                  ),
-                  label: 'Name',
-                  value: 'SK Alif Hosain',
-                },
-                {
-                  icon: (
-                    <svg viewBox="0 0 24 24" fill="none">
-                      <rect x="2" y="7" width="20" height="14" rx="2" stroke="currentColor" strokeWidth="2" />
-                      <path d="m2 7 10 8 10-8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                    </svg>
-                  ),
-                  label: 'Email',
-                  value: 'allswefahim@gmail.com',
-                },
-                {
-                  icon: (
-                    <svg viewBox="0 0 24 24" fill="none">
-                      <path d="M20 6H4a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2Z" stroke="currentColor" strokeWidth="2" />
-                      <path d="M12 2v4M8 2v4M16 2v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                    </svg>
-                  ),
-                  label: 'Profession',
-                  value: 'Affiliate Marketer',
-                },
-                {
-                  icon: (
-                    <svg viewBox="0 0 24 24" fill="none">
-                      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
-                      <path d="M12 7v5l3 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                    </svg>
-                  ),
-                  label: 'Experience',
-                  value: '3+ Years',
-                },
-                {
-                  icon: (
-                    <svg viewBox="0 0 24 24" fill="none">
-                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7Z" stroke="currentColor" strokeWidth="2" />
-                      <circle cx="12" cy="9" r="2.5" stroke="currentColor" strokeWidth="2" />
-                    </svg>
-                  ),
-                  label: 'Location',
-                  value: 'Bangladesh',
-                },
-              ].map(({ icon, label, value }) => (
-                <div className="info-row" key={label}>
-                  <div className="ico">{icon}</div>
-                  <span className="k">{label}</span>
-                  <span className="v">{value}</span>
+              <div className="info-row">
+                <div className="ico">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="8" r="3.4" stroke="currentColor" strokeWidth="1.8" />
+                    <path d="M5 20a7 7 0 0 1 14 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                  </svg>
                 </div>
-              ))}
+                <div className="k">Name</div>
+                <div className="v">Alif Hosain</div>
+              </div>
+              <div className="info-row">
+                <div className="ico">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <rect x="3" y="6" width="18" height="13" rx="2" stroke="currentColor" strokeWidth="1.8" />
+                    <path d="M9 6V4.5A1.5 1.5 0 0 1 10.5 3h3A1.5 1.5 0 0 1 15 4.5V6" stroke="currentColor" strokeWidth="1.8" />
+                  </svg>
+                </div>
+                <div className="k">Profession</div>
+                <div className="v">Affiliate Marketer</div>
+              </div>
+              <div className="info-row">
+                <div className="ico">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.8" />
+                    <path d="M12 7v5l3 2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                  </svg>
+                </div>
+                <div className="k">Experience</div>
+                <div className="v">3+ Years</div>
+              </div>
+              <div className="info-row">
+                <div className="ico">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" strokeWidth="1.8" />
+                    <path d="m4 7 8 6 8-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                  </svg>
+                </div>
+                <div className="k">Email</div>
+                <div className="v">alifhosain@gmail.com</div>
+              </div>
+              <div className="info-row">
+                <div className="ico">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M12 21s7-5.5 7-11a7 7 0 1 0-14 0c0 5.5 7 11 7 11Z" stroke="currentColor" strokeWidth="1.8" />
+                    <circle cx="12" cy="10" r="2.5" stroke="currentColor" strokeWidth="1.8" />
+                  </svg>
+                </div>
+                <div className="k">Location</div>
+                <div className="v">Bangladesh</div>
+              </div>
+            </div>
+            <div className="signature">
+              <div className="sig">Alif Hosain</div>
+              <div className="nm">Alif Hosain</div>
+              <div className="pf">Affiliate Marketer</div>
             </div>
           </div>
         </div>

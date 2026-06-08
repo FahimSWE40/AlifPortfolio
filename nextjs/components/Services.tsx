@@ -1,34 +1,3 @@
-const SERVICES = [
-  {
-    alt: true,
-    img: '/Assets/ChatGPT Image Jun 4, 2026, 05_41_25 AM.webp',
-    title: 'Affiliate Strategy',
-    desc: 'End-to-end affiliate campaign planning — from offer selection and traffic sourcing to funnel architecture and commission structure optimisation.',
-    link: 'Strategy Brief',
-  },
-  {
-    alt: false,
-    img: '/Assets/ChatGPT Image Jun 4, 2026, 05_25_13 AM.webp',
-    title: 'Funnel Optimisation',
-    desc: 'Deep-dive CRO audits, A/B testing frameworks, and landing page redesigns that cut acquisition cost and boost conversion rates.',
-    link: 'See Process',
-  },
-  {
-    alt: true,
-    img: '/Assets/ChatGPT Image Jun 4, 2026, 05_28_10 AM.webp',
-    title: 'Traffic Generation',
-    desc: 'Multi-channel paid and organic traffic — Meta Ads, Google PPC, SEO content, email drops, and influencer partnerships that drive targeted buyers.',
-    link: 'Traffic Mix',
-  },
-  {
-    alt: false,
-    img: '/Assets/ChatGPT Image Jun 4, 2026, 05_32_06 AM.webp',
-    title: 'Analytics & Reporting',
-    desc: 'Custom dashboards, attribution modelling, and weekly performance reports so you always know exactly where every dollar goes.',
-    link: 'View Sample',
-  },
-];
-
 export function Services() {
   return (
     <section id="services">
@@ -38,26 +7,76 @@ export function Services() {
             <span className="eyebrow">What I Do</span>
             <h2 className="section-title">My <span className="grad">Services</span></h2>
           </div>
-          <p className="lede">Four pillars that cover the full lifecycle of a high-performance affiliate programme.</p>
+          <a href="#" className="btn btn-ghost" data-magnetic="">
+            View All Services{' '}
+            <span className="ico">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none">
+                <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
+          </a>
         </div>
 
         <div className="cards-4">
-          {SERVICES.map((s, i) => (
-            <div key={s.title} className={`svc tilt reveal d${i % 3 + 1}`} style={s.alt ? undefined : undefined}>
-              <div className={`svc-ico img`}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={s.img} alt={s.title} loading="lazy" />
-              </div>
-              <h3>{s.title}</h3>
-              <p>{s.desc}</p>
-              <a className="learn" href="#">
-                {s.link}
-                <svg viewBox="0 0 24 24" fill="none">
-                  <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </a>
+          <article className="svc tilt reveal">
+            <div className="svc-ico img">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/Assets/ChatGPT Image Jun 4, 2026, 05_25_50 AM.webp" alt="Affiliate Strategy" loading="lazy" />
             </div>
-          ))}
+            <h3>Affiliate Strategy</h3>
+            <p>I create data-driven affiliate strategies that attract the right audience and maximize ROI across every channel.</p>
+            <a href="#" className="learn">
+              Learn More{' '}
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </a>
+          </article>
+
+          <article className="svc alt tilt reveal d1">
+            <div className="svc-ico img">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/Assets/ChatGPT Image Jun 4, 2026, 05_44_37 AM.webp" alt="Funnel Building" loading="lazy" />
+            </div>
+            <h3>Funnel Building</h3>
+            <p>High-converting funnels designed to turn visitors into buyers and boost revenue at every step.</p>
+            <a href="#" className="learn">
+              Learn More{' '}
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </a>
+          </article>
+
+          <article className="svc tilt reveal d2">
+            <div className="svc-ico img">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/Assets/ChatGPT Image Jun 4, 2026, 05_41_25 AM.webp" alt="Traffic Generation" loading="lazy" />
+            </div>
+            <h3>Traffic Generation</h3>
+            <p>Targeted traffic strategies that bring quality visitors and increase conversions sustainably.</p>
+            <a href="#" className="learn">
+              Learn More{' '}
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </a>
+          </article>
+
+          <article className="svc alt tilt reveal d3">
+            <div className="svc-ico img">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/Assets/ChatGPT Image Jun 4, 2026, 05_25_13 AM.webp" alt="Conversion Optimization" loading="lazy" />
+            </div>
+            <h3>Conversion Optimization</h3>
+            <p>Optimize landing pages, offers, and funnels to capture the highest conversions possible.</p>
+            <a href="#" className="learn">
+              Learn More{' '}
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </a>
+          </article>
         </div>
       </div>
     </section>

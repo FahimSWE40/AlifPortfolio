@@ -1,76 +1,86 @@
-const POSTS = [
-  {
-    cat: 'Strategy',
-    date: 'May 28, 2026',
-    readTime: '6 min read',
-    title: '7 Affiliate Funnel Mistakes Costing You Conversions',
-    gradient: 'linear-gradient(135deg,#03170F,#071A11)',
-    accentLine: 'rgba(0,245,184,.5)',
-  },
-  {
-    cat: 'Traffic',
-    date: 'May 14, 2026',
-    readTime: '8 min read',
-    title: 'How to Cut Meta Ad CPL by 40% Without Losing Volume',
-    gradient: 'linear-gradient(135deg,#170A03,#1A0E07)',
-    accentLine: 'rgba(255,122,24,.5)',
-  },
-  {
-    cat: 'Analytics',
-    date: 'Apr 30, 2026',
-    readTime: '5 min read',
-    title: 'The Attribution Model That Changed My Reporting Game',
-    gradient: 'linear-gradient(135deg,#03170F,#071A11)',
-    accentLine: 'rgba(0,245,184,.5)',
-  },
-];
-
 export function Blog() {
   return (
     <section id="blog">
       <div className="container">
         <div className="section-head reveal">
           <div>
-            <span className="eyebrow">Insights</span>
+            <span className="eyebrow">From The Journal</span>
             <h2 className="section-title">Latest <span className="grad">Articles</span></h2>
           </div>
-          <a href="#" className="btn btn-ghost">All Posts</a>
+          <a href="#" className="btn btn-ghost" data-magnetic="">
+            View All Posts{' '}
+            <span className="ico">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none">
+                <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
+          </a>
         </div>
 
         <div className="blog-grid">
-          {POSTS.map((p, i) => (
-            <article className={`post reveal d${i + 1}`} key={p.title}>
-              <div className="post-img" style={{ background: p.gradient }}>
-                <span className="cat">{p.cat}</span>
-                {/* Inline SVG art */}
-                <svg viewBox="0 0 340 180" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: .6 }}>
-                  <line x1="40" y1="140" x2="100" y2="80"  stroke={p.accentLine} strokeWidth="1.5" />
-                  <line x1="100" y1="80"  x2="160" y2="110" stroke={p.accentLine} strokeWidth="1.5" />
-                  <line x1="160" y1="110" x2="220" y2="50"  stroke={p.accentLine} strokeWidth="1.5" />
-                  <line x1="220" y1="50"  x2="300" y2="70"  stroke={p.accentLine} strokeWidth="1.5" />
-                  {[40,100,160,220,300].map((x, k) => {
-                    const ys = [140,80,110,50,70];
-                    return <circle key={k} cx={x} cy={ys[k]} r="4" fill={p.accentLine} />;
-                  })}
-                  <path d={`M40 140 L100 80 L160 110 L220 50 L300 70 L300 180 L40 180 Z`} fill={p.accentLine} opacity=".12" />
+          <article className="post reveal">
+            <div className="post-img" style={{ background: 'linear-gradient(150deg,#0c3326,#05130d)' }}>
+              <span className="cat">Strategy</span>
+              <svg width="100%" height="100%" viewBox="0 0 360 180" preserveAspectRatio="xMidYMid slice">
+                <path d="M0 140 L60 110 L120 124 L180 80 L240 96 L300 50 L360 70" stroke="#00F5B8" strokeWidth="3" fill="none" opacity=".7" />
+                <circle cx="300" cy="50" r="5" fill="#00F5B8" />
+              </svg>
+            </div>
+            <div className="post-body">
+              <div className="post-meta"><span>May 28, 2026</span><span className="d" /><span>6 min read</span></div>
+              <h3>7 Affiliate Funnels That Convert at Scale in 2026</h3>
+              <a href="#" className="readmore">
+                Read More{' '}
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
-              </div>
-              <div className="post-body">
-                <div className="post-meta">
-                  <span>{p.date}</span>
-                  <span className="d" />
-                  <span>{p.readTime}</span>
-                </div>
-                <h3>{p.title}</h3>
-                <a className="readmore" href="#">
-                  Read Article
-                  <svg viewBox="0 0 24 24" fill="none">
-                    <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </a>
-              </div>
-            </article>
-          ))}
+              </a>
+            </div>
+          </article>
+
+          <article className="post reveal d1">
+            <div className="post-img" style={{ background: 'linear-gradient(150deg,#33210c,#130b05)' }}>
+              <span className="cat" style={{ borderColor: 'var(--stroke-orange)', color: 'var(--orange)' }}>Traffic</span>
+              <svg width="100%" height="100%" viewBox="0 0 360 180" preserveAspectRatio="xMidYMid slice">
+                <rect x="30" y="110" width="36" height="50" rx="4" fill="#FF7A18" opacity=".7" />
+                <rect x="90" y="86" width="36" height="74" rx="4" fill="#FF7A18" opacity=".55" />
+                <rect x="150" y="60" width="36" height="100" rx="4" fill="#FF7A18" opacity=".7" />
+                <rect x="210" y="40" width="36" height="120" rx="4" fill="#FF7A18" opacity=".85" />
+                <rect x="270" y="70" width="36" height="90" rx="4" fill="#FF7A18" opacity=".6" />
+              </svg>
+            </div>
+            <div className="post-body">
+              <div className="post-meta"><span>May 14, 2026</span><span className="d" /><span>8 min read</span></div>
+              <h3>Paid Traffic vs. SEO: Where Should Affiliates Invest?</h3>
+              <a href="#" className="readmore">
+                Read More{' '}
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </a>
+            </div>
+          </article>
+
+          <article className="post reveal d2">
+            <div className="post-img" style={{ background: 'linear-gradient(150deg,#0a2c2c,#05110f)' }}>
+              <span className="cat">Optimization</span>
+              <svg width="100%" height="100%" viewBox="0 0 360 180" preserveAspectRatio="xMidYMid slice">
+                <circle cx="180" cy="90" r="56" fill="none" stroke="#00F5B8" strokeWidth="3" opacity=".3" />
+                <path d="M180 34 A56 56 0 0 1 226 118" fill="none" stroke="#00F5B8" strokeWidth="6" strokeLinecap="round" />
+                <text x="180" y="98" fill="#00F5B8" fontSize="26" fontFamily="Sora,sans-serif" fontWeight="700" textAnchor="middle">+38%</text>
+              </svg>
+            </div>
+            <div className="post-body">
+              <div className="post-meta"><span>Apr 30, 2026</span><span className="d" /><span>5 min read</span></div>
+              <h3>The CRO Checklist I Use Before Every Launch</h3>
+              <a href="#" className="readmore">
+                Read More{' '}
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </a>
+            </div>
+          </article>
         </div>
       </div>
     </section>
