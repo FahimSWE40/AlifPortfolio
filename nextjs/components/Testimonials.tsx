@@ -66,10 +66,24 @@ export function Testimonials() {
               ))}
             </div>
           </div>
-          <div className="tnav">
-            {TESTIMONIALS.map((_, i) => (
-              <button key={i} className={`tdot${idx === i ? ' active' : ''}`} aria-label={`Testimonial ${i + 1}`} onClick={() => next(i)} />
-            ))}
+
+          {/* Navigation: prev · dots · next */}
+          <div className="tnav-wrap">
+            <button className="tnav-btn" onClick={() => next(idx - 1)} aria-label="Previous testimonial">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+                <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+            <div className="tnav">
+              {TESTIMONIALS.map((_, i) => (
+                <button key={i} className={`tdot${idx === i ? ' active' : ''}`} aria-label={`Testimonial ${i + 1}`} onClick={() => next(i)} />
+              ))}
+            </div>
+            <button className="tnav-btn" onClick={() => next(idx + 1)} aria-label="Next testimonial">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+                <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
           </div>
         </div>
       </div>

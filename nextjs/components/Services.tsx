@@ -19,6 +19,7 @@ export function Services() {
 
         <div className="cards-4">
           <article className="svc tilt reveal">
+            <span className="svc-num">01</span>
             <div className="svc-ico img">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/Assets/ChatGPT Image Jun 4, 2026, 05_25_50 AM.webp" alt="Affiliate Strategy" loading="lazy" />
@@ -34,6 +35,7 @@ export function Services() {
           </article>
 
           <article className="svc alt tilt reveal d1">
+            <span className="svc-num">02</span>
             <div className="svc-ico img">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/Assets/ChatGPT Image Jun 4, 2026, 05_44_37 AM.webp" alt="Funnel Building" loading="lazy" />
@@ -49,6 +51,7 @@ export function Services() {
           </article>
 
           <article className="svc tilt reveal d2">
+            <span className="svc-num">03</span>
             <div className="svc-ico img">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/Assets/ChatGPT Image Jun 4, 2026, 05_41_25 AM.webp" alt="Traffic Generation" loading="lazy" />
@@ -64,6 +67,7 @@ export function Services() {
           </article>
 
           <article className="svc alt tilt reveal d3">
+            <span className="svc-num">04</span>
             <div className="svc-ico img">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/Assets/ChatGPT Image Jun 4, 2026, 05_25_13 AM.webp" alt="Conversion Optimization" loading="lazy" />
