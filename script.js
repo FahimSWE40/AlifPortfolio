@@ -226,155 +226,173 @@
 })();
 
 /* ============================================================
-   SK ALIF HOSAIN — Cinematic intro scroll driver
-   Scrubs a procedural "image sequence" from scroll progress.
+   SK ALIF HOSAIN — Image Sequence Scroll Driver
+   Preloads 76 PNG frames and scrubs through them via scroll.
    ============================================================ */
 (function(){
   'use strict';
-  const stage = document.getElementById('cineStage');
-  const wrap  = document.getElementById('scrolly');
-  if(!stage || !wrap) return;
 
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const TOTAL = 76;
+  const DIR   = 'ezgif-split/';
 
-  // Hide nav immediately (JS confirmed running) so the film opens clean.
+  const wrap      = document.getElementById('seqWrap');
+  const canvas    = document.getElementById('seqCanvas');
+  const loader    = document.getElementById('seqLoader');
+  const loaderBar = document.getElementById('seqLoaderBar');
+  const phaseEl   = document.getElementById('seqPhase');
+  const frameEl   = document.getElementById('seqFrameNum');
+  const progFill  = document.getElementById('seqProgFill');
+  const cue       = document.getElementById('seqCue');
+  const copyEy    = document.getElementById('seqCopyEyebrow');
+  const copyName  = document.getElementById('seqCopyName');
+  const copyRole  = document.getElementById('seqCopyRole');
+
+  if(!wrap || !canvas) return;
+
   document.body.classList.add('intro-on');
-
-  // Always begin the film at frame 0.
   try{ history.scrollRestoration = 'manual'; }catch(e){}
 
-  const el = {
-    grid:   document.getElementById('cineGrid'),
-    mono:   document.getElementById('cineMono'),
-    rings:  document.getElementById('cineRings'),
-    core:   document.getElementById('cineCore'),
-    pw:     document.getElementById('cinePortrait'),
-    icons:  [...document.querySelectorAll('.cine-ic')],
-    eyebrow:document.getElementById('cineEyebrow'),
-    words:  [...document.querySelectorAll('.cine-title .word i')],
-    sub:    document.getElementById('cineSub'),
-    phase:  document.getElementById('cinePhase'),
-    frame:  document.getElementById('cineFrame'),
-    bar:    document.getElementById('cineBar'),
-    cue:    document.getElementById('cineCue'),
-  };
+  const ctx = canvas.getContext('2d');
+  let lastIdx = -1;
+
+  function resize(){
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+    if(lastIdx >= 0) drawFrame(lastIdx);
+  }
+  window.addEventListener('resize', resize, {passive:true});
+  resize();
+
+  function framePath(i){
+    return DIR + 'frame_' + String(i).padStart(2,'0') + '_delay-0.066s.png';
+  }
+
+  const images = new Array(TOTAL);
+  let loaded = 0;
+  let ready  = false;
+
+  function drawFrame(idx){
+    const img = images[idx];
+    if(!img || !img.complete || !img.naturalWidth) return;
+    lastIdx = idx;
+    const cw = canvas.width, ch = canvas.height;
+    const iw = img.naturalWidth,  ih = img.naturalHeight;
+    const scale = Math.max(cw/iw, ch/ih);
+    const sw = iw*scale, sh = ih*scale;
+    // Fill with brand bg first — prevents white flicker on transparent frame edges
+    ctx.fillStyle = '#121212';
+    ctx.fillRect(0, 0, cw, ch);
+    ctx.drawImage(img, (cw-sw)/2, (ch-sh)/2, sw, sh);
+  }
+
+  function onImgLoad(){
+    loaded++;
+    loaderBar.style.width = ((loaded/TOTAL)*100).toFixed(1)+'%';
+    if(loaded === TOTAL){
+      ready = true;
+      if(phaseEl) phaseEl.textContent = 'READY';
+      drawFrame(0);
+      setTimeout(()=>{ loader.classList.add('hidden'); tick(); }, 350);
+    }
+  }
+
+  for(let i=0; i<TOTAL; i++){
+    const img = new Image();
+    img.onload  = onImgLoad;
+    img.onerror = onImgLoad; // count failed loads so preloader never hangs
+    img.src = framePath(i);
+    images[i] = img;
+  }
 
   const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
-  const seg   = (p,a,b)=>clamp((p-a)/(b-a),0,1);
-  const lerp  = (a,b,t)=>a+(b-a)*t;
-  const easeOut = t=>1-Math.pow(1-t,3);
-  const easeInOut = t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
 
   function phaseLabel(p){
-    if(p<0.14) return 'BOOT';
-    if(p<0.34) return 'ASSEMBLE';
-    if(p<0.60) return 'RENDER';
-    if(p<0.84) return 'IDENTITY';
-    return 'READY';
+    if(p < 0.15) return 'BOOT';
+    if(p < 0.40) return 'SCRUB';
+    if(p < 0.72) return 'RENDER';
+    if(p < 0.90) return 'REVEAL';
+    return 'COMPLETE';
+  }
+
+  /* Parallax overlay helpers.
+     Three depth planes (left/center/right) each drift at a unique rate.
+     JS drives transform every rAF; CSS transition handles opacity-only. */
+  function localPct(p, start, end){
+    return clamp((p - start) / (end - start), 0, 1);
+  }
+
+  /* Smooth fade-in (over first 5%) and fade-out (over last 4%) of window */
+  function overlayOpacity(p, enter, exit){
+    if(p < enter || p >= exit) return 0;
+    const fadeInEnd    = Math.min(enter + 0.05, exit);
+    const fadeOutStart = Math.max(exit  - 0.04, enter);
+    if(p < fadeInEnd)    return (p - enter)      / (fadeInEnd    - enter);
+    if(p >= fadeOutStart) return 1 - (p - fadeOutStart) / (exit - fadeOutStart);
+    return 1;
+  }
+
+  function applyOverlay(el, alpha, driftPx){
+    if(!el) return;
+    el.style.opacity = alpha.toFixed(3);
+    const yPx = alpha > 0 ? driftPx.toFixed(1) : '12';
+    el.style.transform = `translateY(${yPx}px)`;
   }
 
   function render(p){
-    /* ---- HUD ---- */
-    el.frame.textContent = String(Math.round(p*120)).padStart(3,'0');
-    el.phase.textContent = phaseLabel(p);
-    el.bar.style.height  = (p*100).toFixed(1)+'%';
+    if(!ready) return;
 
-    /* ---- grid ---- */
-    const g = seg(p,0.04,0.30);
-    el.grid.style.opacity = (g*0.9*(1-seg(p,0.82,1))).toFixed(3);
-    el.grid.style.transform = `scale(${lerp(1.18,1,easeOut(g))})`;
+    const idx = clamp(Math.floor(p * TOTAL), 0, TOTAL-1);
+    drawFrame(idx);
 
-    /* ---- monogram ---- */
-    const m = seg(p,0.02,0.30), mFade = 1-seg(p,0.6,0.92);
-    el.mono.style.opacity = (lerp(0,1,easeOut(m))*mFade).toFixed(3);
-    el.mono.style.transform = `scale(${lerp(1.22,1,easeInOut(m))})`;
+    if(frameEl) frameEl.textContent = String(idx).padStart(3,'0');
+    if(phaseEl) phaseEl.textContent = phaseLabel(p);
+    if(progFill) progFill.style.height = (p*100).toFixed(1)+'%';
 
-    /* ---- core: ignite -> swell -> melt into a contained halo ---- */
-    const ci = seg(p,0.0,0.16);
-    const cs = seg(p,0.12,0.46);
-    const cm = seg(p,0.38,0.64);
-    const coreScale = lerp(0.5, 1, easeOut(ci)) * lerp(1, 2.6, easeInOut(cs));
-    el.core.style.transform = `scale(${coreScale})`;
-    el.core.style.filter = `blur(${lerp(0,40,cm)}px)`;
-    el.core.style.opacity = ((0.32 + 0.68*easeOut(ci)) * lerp(1,0.26,cm)).toFixed(3);
+    /* ---- Per-layer parallax — left / center / right depth planes ---- */
+    const eyAlpha   = overlayOpacity(p, 0.28, 0.92);  // LEFT  — slow
+    const nameAlpha = overlayOpacity(p, 0.45, 0.92);  // CENTER — medium
+    const roleAlpha = overlayOpacity(p, 0.64, 0.92);  // RIGHT  — fast
 
-    /* ---- rings assemble + slow spin ---- */
-    const r = seg(p,0.12,0.40), rFade = 1-seg(p,0.86,1);
-    el.rings.style.opacity = (easeOut(r)*rFade).toFixed(3);
-    const rs = lerp(0.55,1,easeOut(r));
-    el.rings.style.transform = `scale(${rs}) rotate(${p*140}deg)`;
+    const eyLoc   = localPct(p, 0.28, 0.92);
+    const nameLoc = localPct(p, 0.45, 0.92);
+    const roleLoc = localPct(p, 0.64, 0.92);
 
-    /* ---- portrait rises, rim-light builds ---- */
-    const pin = seg(p,0.34,0.56);
-    const pset= seg(p,0.40,0.74);
-    el.pw.style.opacity = easeOut(pin).toFixed(3);
-    el.pw.style.transform =
-      `translateY(${lerp(150,0,easeOut(pset))}px) scale(${lerp(0.82,1,easeOut(pset))})`;
-    el.pw.style.setProperty('--rim', seg(p,0.42,0.78).toFixed(3));
+    applyOverlay(copyEy,   eyAlpha,   eyLoc  * -60);   // max -60px drift
+    applyOverlay(copyName, nameAlpha, nameLoc * -90);  // max -90px drift
+    applyOverlay(copyRole, roleAlpha, roleLoc * -120); // max -120px drift
 
-    /* ---- icons fly in (staggered) ---- */
-    const ibase = seg(p,0.56,0.86);
-    el.icons.forEach((ic,i)=>{
-      const t = easeOut(clamp((ibase - i*0.10)/0.62,0,1));
-      const fx = parseFloat(ic.dataset.fx)||0;
-      const fy = parseFloat(ic.dataset.fy)||0;
-      ic.style.opacity = t.toFixed(3);
-      ic.style.transform = `translate(${(fx*(1-t)).toFixed(1)}px,${(fy*(1-t)).toFixed(1)}px) scale(${lerp(0.4,1,t).toFixed(3)})`;
-    });
+    if(cue) cue.style.opacity = p < 0.06 ? (1 - p / 0.06).toFixed(3) : '0';
 
-    /* ---- kinetic title ---- */
-    const ey = seg(p,0.58,0.72);
-    el.eyebrow.style.opacity = ey.toFixed(3);
-    el.eyebrow.style.transform = `translateY(${lerp(14,0,easeOut(ey))}px)`;
-    const tbase = seg(p,0.62,0.84);
-    el.words.forEach((w,i)=>{
-      const t = easeOut(clamp((tbase - i*0.12)/0.64,0,1));
-      w.style.transform = `translateY(${lerp(118,0,t).toFixed(1)}%)`;
-    });
-    const sb = seg(p,0.76,0.90);
-    el.sub.style.opacity = sb.toFixed(3);
-    el.sub.style.transform = `translateY(${lerp(16,0,easeOut(sb))}px)`;
-
-    /* ---- scroll cue fades after first beat ---- */
-    el.cue.style.opacity = (1-seg(p,0.02,0.14)).toFixed(3);
-
-    /* ---- dissolve into hero ---- */
-    const out = seg(p,0.92,1);
-    stage.style.opacity = (1-out).toFixed(3);
-    stage.style.transform = `scale(${lerp(1,1.06,out)})`;
-
-    /* nav: hidden during film, appears as it ends */
-    document.body.classList.toggle('intro-on', p < 0.9);
+    document.body.classList.toggle('intro-on', p < 0.90);
   }
 
   function progress(){
-    const rect = wrap.getBoundingClientRect();
+    const rect  = wrap.getBoundingClientRect();
     const total = wrap.offsetHeight - window.innerHeight;
-    return clamp(-rect.top/total, 0, 1);
+    return clamp(-rect.top / total, 0, 1);
   }
 
-  let ticking=false;
-  function onScroll(){
+  let ticking = false;
+  function tick(){
     if(ticking) return; ticking=true;
     requestAnimationFrame(()=>{ render(progress()); ticking=false; });
   }
-  window.addEventListener('scroll', onScroll, {passive:true});
-  window.addEventListener('resize', onScroll, {passive:true});
 
-  // Start fresh at the top, then paint frame 0.
-  if(!reduce){ try{ window.scrollTo(0,0); }catch(e){} }
-  render(progress());
-  requestAnimationFrame(()=>render(progress()));
-  window.addEventListener('load', ()=>render(progress()));
-  window.__cine = { render, progress };
+  window.addEventListener('scroll', tick, {passive:true});
+  window.addEventListener('resize', tick, {passive:true});
+  window.addEventListener('load',   ()=>{ if(ready) render(progress()); });
 
-  /* Frozen-timeline / no-scroll fallback */
+  /* Frozen-timeline / no-animation fallback */
   (function frozenGuard(){
     let t0; try{ t0=document.timeline.currentTime||0; }catch(e){ t0=performance.now(); }
     setTimeout(()=>{
       let t1; try{ t1=document.timeline.currentTime||0; }catch(e){ t1=performance.now(); }
-      if(t1-t0 < 5){ render(1); document.body.classList.remove('intro-on');
-        const nv=document.getElementById('nav'); if(nv){ nv.style.opacity='1'; nv.style.transform='none'; } }
+      if(t1-t0 < 5){
+        document.body.classList.remove('intro-on');
+        if(loader) loader.classList.add('hidden');
+      }
     }, 520);
   })();
+
+  window.__seq = { render, progress, images };
 })();
