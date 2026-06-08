@@ -644,3 +644,120 @@ body.intro-on .nav { opacity: 0 !important; pointer-events: none; transform: tra
   .hero-actions { flex-direction: column; align-items: stretch }
   .btn { justify-content: center }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   AWWWARDS ENHANCEMENT LAYER
+   Overrides and additions for elevated glass-morphism design.
+   All rules placed after base CSS to win the cascade cleanly.
+══════════════════════════════════════════════════════════════ */
+
+/* ── Case cards: gradient top-edge accent line ── */
+.case { position: relative; overflow: hidden; }
+.case::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 18%; right: 18%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0,245,184,0.55), transparent);
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0.55;
+  transition: opacity 0.45s var(--ease), left 0.45s var(--ease), right 0.45s var(--ease);
+  border-radius: inherit;
+}
+.case.o::before {
+  background: linear-gradient(90deg, transparent, rgba(255,122,24,0.60), transparent);
+}
+.case:hover::before {
+  opacity: 1;
+  left: 6%;
+  right: 6%;
+}
+
+/* ── Case cards: stronger color-coded hover glow ── */
+.case:hover {
+  transform: translateY(-10px);
+  border-color: rgba(0, 245, 184, 0.20);
+  box-shadow:
+    0 48px 90px rgba(0,0,0,0.60),
+    0 0 0 1px rgba(0,245,184,0.08),
+    0 0 70px rgba(0,245,184,0.13);
+}
+.case.o:hover {
+  border-color: rgba(255, 122, 24, 0.20);
+  box-shadow:
+    0 48px 90px rgba(0,0,0,0.60),
+    0 0 0 1px rgba(255,122,24,0.08),
+    0 0 70px rgba(255,122,24,0.10);
+}
+
+/* ── Case thumb: taller mockup area ── */
+.case-thumb { height: 178px; }
+
+/* ── ROI metric: gradient text ── */
+.case-metrics .m.roi .v {
+  font-size: 26px;
+  background: linear-gradient(120deg, var(--green) 0%, #46ffce 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.case.o .case-metrics .m.roi .v {
+  background: linear-gradient(120deg, var(--orange) 0%, #ff9b50 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ── Browser chrome URL bar ── */
+.case-url {
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  font-size: 9px;
+  color: rgba(255,255,255,0.25);
+  letter-spacing: 0.02em;
+  flex: 1;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding: 0 6px;
+}
+
+/* ── Live pulse dot on case-badge ── */
+.case-badge { position: relative; flex-shrink: 0; }
+.case-live {
+  position: absolute;
+  top: -3px; right: -3px;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  border: 2px solid var(--bg);
+  animation: livePulse 2.2s ease-in-out infinite;
+}
+.case.o .case-live { background: var(--orange); }
+@keyframes livePulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.45; transform: scale(0.8); }
+}
+
+/* ── Section hover: subtle background glow on cases section ── */
+#cases { overflow: visible; }
+
+/* ── Blog post: orange accent variant ── */
+.post.o { border-color: rgba(255,122,24,0.12); }
+.post.o:hover { border-color: rgba(255,122,24,0.28); box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 50px rgba(255,122,24,0.08); }
+.post.o .post-img .cat { border-color: var(--stroke-orange); color: var(--orange); }
+.post.o .readmore { color: var(--orange); }
+
+/* ── Scroll sequence: hide left/right text layers on small screens ── */
+@media (max-width: 640px) {
+  .seq-text-left, .seq-text-right { display: none; }
+}
+
+/* ── Smooth appearance of hero after sequence ends ── */
+.wrap { animation: wrapFadeIn 0.6s var(--ease-out) both; animation-play-state: paused; }
+body:not(.intro-on) .wrap { animation-play-state: running; }
+@keyframes wrapFadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: none; }
+}

@@ -9,98 +9,61 @@ import {
   type MotionValue,
 } from 'framer-motion';
 
-/* ─────────────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════════════
    Config
-───────────────────────────────────────────────────────────── */
+══════════════════════════════════════════════════════════════ */
 const TOTAL  = 76;
-const BG     = '#121212';
-const HEIGHT = '500vh';   // scroll range — gives ~6.5px per frame at 1080p
+const BG     = '#0c0c0c';
+const HEIGHT = '500vh';
 
-function framePath(i: number): string {
-  // Frames live in /public/ezgif-split/ → served as /ezgif-split/
+function framePath(i: number) {
   return `/ezgif-split/frame_${String(i).padStart(2, '0')}_delay-0.066s.png`;
 }
-
 const PATHS = Array.from({ length: TOTAL }, (_, i) => framePath(i));
 
-/* ─────────────────────────────────────────────────────────────
-   TextLayer — parallax text overlay driven by scroll progress
-
-   Each layer drifts upward at a unique rate (driftPx), creating
-   the illusion of separate depth planes on top of the canvas.
-───────────────────────────────────────────────────────────── */
-interface TextLayerProps {
-  scrollYProgress: MotionValue<number>;
-  /** [enter, exit] as 0→1 within the scroll section */
-  visibleRange: [number, number];
-  /** Max upward drift in px over the visible window */
-  driftPx: number;
-  align: 'left' | 'center' | 'right';
-  bottom: string;
-  left?: string;
-  right?: string;
-  children: React.ReactNode;
-}
-
+/* ═══════════════════════════════════════════════════════════════
+   TextLayer — scroll-driven parallax overlay
+   Each layer fades in/out over its visibleRange window and drifts
+   upward by driftPx over the full visible window (parallax depth).
+══════════════════════════════════════════════════════════════ */
 function TextLayer({
   scrollYProgress,
   visibleRange,
-  driftPx,
-  align,
-  bottom,
-  left,
-  right,
+  driftPx = 70,
+  style,
   children,
-}: TextLayerProps) {
+}: {
+  scrollYProgress: MotionValue<number>;
+  visibleRange: [number, number];
+  driftPx?: number;
+  style?: CSSProperties;
+  children: React.ReactNode;
+}) {
   const [enter, exit] = visibleRange;
-
-  // Fade in quickly, hold, then fade out at the end of the window
   const opacity = useTransform(
     scrollYProgress,
-    [enter, enter + 0.05, exit - 0.04, exit],
+    [enter, enter + 0.07, exit - 0.06, exit],
     [0, 1, 1, 0],
   );
-
-  // Drift from 12px below entry point to -driftPx at exit — parallax depth
-  const y = useTransform(scrollYProgress, [enter, exit], [12, -driftPx]);
-
-  const pos: CSSProperties = { bottom };
-  if (align === 'center') {
-    // Full-width + textAlign avoids transform conflicts with Framer Motion's y
-    pos.left  = 0;
-    pos.right = 0;
-    pos.textAlign = 'center';
-  } else if (align === 'left') {
-    pos.left  = left  ?? '5vw';
-    pos.right = 'auto';
-    pos.textAlign = 'left';
-  } else {
-    pos.right = right ?? '5vw';
-    pos.left  = 'auto';
-    pos.textAlign = 'right';
-  }
-
+  const y = useTransform(scrollYProgress, [enter, exit], [18, -driftPx]);
   return (
     <motion.div
-      style={{ opacity, y, ...pos }}
-      className="absolute z-10 pointer-events-none whitespace-nowrap"
+      style={{ position: 'absolute', zIndex: 10, pointerEvents: 'none', opacity, y, ...style }}
     >
       {children}
     </motion.div>
   );
 }
 
-/* ─────────────────────────────────────────────────────────────
-   ScrollSequence — main component
-───────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════
+   ScrollSequence
+══════════════════════════════════════════════════════════════ */
 export function ScrollSequence() {
-  const wrapRef   = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const imagesRef = useRef<HTMLImageElement[]>([]);
-  const lastIdx   = useRef(-1);
-  // Refs for direct DOM updates (avoids React re-renders at 60fps)
-  const frameSpanRef = useRef<HTMLSpanElement>(null);
-  const phaseSpanRef = useRef<HTMLSpanElement>(null);
+  const wrapRef     = useRef<HTMLDivElement>(null);
+  const canvasRef   = useRef<HTMLCanvasElement>(null);
+  const imagesRef   = useRef<HTMLImageElement[]>([]);
+  const lastIdx     = useRef(-1);
+  const frameNumRef = useRef<HTMLSpanElement>(null);
 
   const [loadedCount, setLoadedCount] = useState(0);
   const [ready, setReady]             = useState(false);
@@ -111,28 +74,35 @@ export function ScrollSequence() {
     offset: ['start start', 'end end'],
   });
 
-  const frameIndex = useTransform(scrollYProgress, [0, 1], [0, TOTAL - 1]);
-  const progressH  = useTransform(scrollYProgress, [0, 1], ['0%', '100%']);
-  const cueOpacity = useTransform(scrollYProgress, [0, 0.06], [1, 0]);
+  const frameIndex    = useTransform(scrollYProgress, [0, 1], [0, TOTAL - 1]);
+  const progressH     = useTransform(scrollYProgress, [0, 1], ['0%', '100%']);
+  const cueOpacity    = useTransform(scrollYProgress, [0, 0.07], [1, 0]);
+  // Canvas fades out as the 500vh scroll approaches its end → smooth reveal of hero
+  const stickyOpacity = useTransform(scrollYProgress, [0.87, 0.99], [1, 0]);
+
+  /* ── Hide nav while intro plays; show it once scroll passes 90% ── */
+  useEffect(() => {
+    document.body.classList.add('intro-on');
+    return () => { document.body.classList.remove('intro-on'); };
+  }, []);
+
+  useMotionValueEvent(scrollYProgress, 'change', (p) => {
+    document.body.classList.toggle('intro-on', p < 0.90);
+  });
 
   /* ── Cover-fit canvas draw ── */
   const draw = useCallback((rawIdx: number) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-
     const idx = Math.max(0, Math.min(TOTAL - 1, Math.round(rawIdx)));
     const img  = imagesRef.current[idx];
     if (!img?.complete || !img.naturalWidth) return;
-
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-
     const { width: cw, height: ch } = canvas;
     const scale = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
     const sw = img.naturalWidth  * scale;
     const sh = img.naturalHeight * scale;
-
-    // Fill brand bg first — eliminates white flicker on transparent frame edges
     ctx.fillStyle = BG;
     ctx.fillRect(0, 0, cw, ch);
     ctx.drawImage(img, (cw - sw) / 2, (ch - sh) / 2, sw, sh);
@@ -142,7 +112,6 @@ export function ScrollSequence() {
   /* ── Preload all frames in parallel ── */
   useEffect(() => {
     let count = 0;
-
     imagesRef.current = PATHS.map((src) => {
       const img = new Image();
       const onSettle = () => {
@@ -151,23 +120,21 @@ export function ScrollSequence() {
         if (count === TOTAL) setReady(true);
       };
       img.onload  = onSettle;
-      img.onerror = onSettle; // count failed loads so we don't get stuck
+      img.onerror = onSettle;
       img.src = src;
       return img;
     });
   }, []);
 
-  /* ── Resize canvas to match viewport ── */
+  /* ── Resize canvas to fill viewport ── */
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-
     const resize = () => {
       canvas.width  = window.innerWidth;
       canvas.height = window.innerHeight;
       if (lastIdx.current >= 0) draw(lastIdx.current);
     };
-
     resize();
     window.addEventListener('resize', resize, { passive: true });
     return () => window.removeEventListener('resize', resize);
@@ -177,174 +144,247 @@ export function ScrollSequence() {
   useMotionValueEvent(frameIndex, 'change', (v) => {
     if (!ready) return;
     draw(v);
-
-    // Update HUD via direct DOM write — zero React overhead
     const i = Math.max(0, Math.min(TOTAL - 1, Math.round(v)));
-    if (frameSpanRef.current) {
-      frameSpanRef.current.textContent = String(i).padStart(3, '0');
-    }
-    if (phaseSpanRef.current) {
-      phaseSpanRef.current.textContent = phaseLabel(v / (TOTAL - 1));
+    if (frameNumRef.current) {
+      frameNumRef.current.textContent = String(i).padStart(2, '0');
     }
   });
 
-  /* ── Draw frame 0 as soon as preload finishes ── */
-  useEffect(() => {
-    if (ready) draw(0);
-  }, [ready, draw]);
+  /* ── Draw frame 0 once preload finishes ── */
+  useEffect(() => { if (ready) draw(0); }, [ready, draw]);
 
-  const loadingPct = ((loadedCount / TOTAL) * 100).toFixed(1);
+  const pct = Math.round((loadedCount / TOTAL) * 100);
 
   return (
     <section ref={wrapRef} style={{ height: HEIGHT }} className="relative">
-      {/* Sticky viewport container */}
-      <div
-        className="sticky top-0 h-screen w-full overflow-hidden"
-        style={{ background: BG }}
-      >
 
-        {/* ── HTML5 Canvas (no <img> tag) ── */}
-        <canvas
-          ref={canvasRef}
-          className="absolute inset-0 block"
+      {/* Sticky viewport — fades out at end of 500vh scroll */}
+      <motion.div
+        className="sticky top-0 h-screen w-full overflow-hidden"
+        style={{ background: BG, opacity: stickyOpacity }}
+      >
+        {/* ── HTML5 Canvas (no <img> tags) ── */}
+        <canvas ref={canvasRef} className="absolute inset-0 block" aria-hidden />
+
+        {/* Cinematic vignette — edge darkening + top/bottom gradients */}
+        <div
           aria-hidden
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: [
+              'radial-gradient(ellipse 88% 72% at 50% 50%, transparent 32%, rgba(0,0,0,0.60) 100%)',
+              'linear-gradient(to bottom, rgba(0,0,0,0.40) 0%, transparent 20%, transparent 66%, rgba(0,0,0,0.58) 100%)',
+            ].join(','),
+          }}
         />
 
-        {/* ── Loading overlay ── */}
+        {/* Film grain — subtle cinematic texture */}
+        <div
+          aria-hidden
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            opacity: 0.030,
+            mixBlendMode: 'overlay',
+            backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
+            backgroundSize: '180px 180px',
+          }}
+        />
+
+        {/* ── LOADING OVERLAY ── */}
         <motion.div
           className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-5"
           style={{ background: BG }}
           animate={{ opacity: ready ? 0 : 1 }}
-          transition={{ duration: 0.6, ease: 'easeOut' }}
-          // Remove from pointer flow once hidden
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           onAnimationComplete={() => {
             const el = document.getElementById('seq-loader');
             if (el && ready) el.style.display = 'none';
           }}
           id="seq-loader"
         >
-          {/* Spinner */}
-          <div className="h-12 w-12 rounded-full border-2 border-white/10 border-t-[#00F5B8] animate-spin" />
+          {/* Monogram */}
+          <div className="flex items-center gap-2.5 mb-5 select-none">
+            <div className="w-8 h-8 rounded-xl border border-[#00F5B8]/28 flex items-center justify-center">
+              <span className="font-mono text-[10px] font-bold text-[#00F5B8] tracking-widest">AH</span>
+            </div>
+            <span className="font-mono text-[9px] tracking-[0.40em] uppercase text-white/22">Portfolio</span>
+          </div>
+
+          {/* Dual-ring spinner */}
+          <div className="relative h-[52px] w-[52px]">
+            <div className="absolute inset-0 rounded-full border-2 border-white/6" />
+            <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-[#00F5B8] animate-spin" />
+            <div className="absolute inset-[6px] rounded-full border border-white/8" />
+          </div>
+
+          {/* Percentage counter */}
+          <div className="flex items-baseline gap-0.5">
+            <span className="font-mono text-[32px] font-thin text-white/65 tabular-nums leading-none">{pct}</span>
+            <span className="font-mono text-sm text-white/22">%</span>
+          </div>
 
           {/* Progress bar */}
-          <div className="w-48 h-px rounded overflow-hidden bg-white/10">
+          <div className="w-48 h-px rounded overflow-hidden bg-white/8">
             <div
-              className="h-full rounded transition-[width] duration-150 bg-gradient-to-r from-[#00F5B8] to-[#FF7A18]"
-              style={{ width: `${loadingPct}%` }}
+              className="h-full rounded bg-gradient-to-r from-[#00F5B8] to-[#FF7A18] transition-[width] duration-200"
+              style={{ width: `${pct}%` }}
             />
           </div>
 
-          <span className="font-mono text-[11px] tracking-[0.28em] uppercase text-white/40">
-            Loading
+          <span className="font-mono text-[9px] tracking-[0.38em] uppercase text-white/22">
+            {loadedCount} / {TOTAL} frames
           </span>
         </motion.div>
 
-        {/* ── Text overlays — three depth planes ── */}
+        {/* ══════════════════════════════════════════════════════
+            TEXT LAYERS — three cinematic depth planes
+        ══════════════════════════════════════════════════════ */}
 
-        {/* LEFT — Eyebrow (slow layer, −60 px max drift) */}
+        {/* LAYER 0 — Eyebrow: early reveal, top area, left-aligned */}
         <TextLayer
           scrollYProgress={scrollYProgress}
-          visibleRange={[0.28, 0.92]}
-          driftPx={60}
-          align="left"
-          bottom="22vh"
-          left="5vw"
+          visibleRange={[0.06, 0.36]}
+          driftPx={28}
+          style={{ top: '20vh', left: '5vw' }}
         >
-          <div className="flex items-center gap-3 font-mono font-semibold tracking-[0.42em] uppercase text-[#00F5B8]"
-               style={{ fontSize: 'clamp(11px, 1.1vw, 14px)' }}>
-            <span className="block w-8 h-px bg-[#00F5B8]/50 shrink-0" />
-            Performance Marketing
+          <div className="flex items-center gap-3">
+            <span className="block w-7 h-px bg-[#00F5B8]/40 flex-shrink-0" />
+            <span
+              className="font-mono font-semibold tracking-[0.42em] uppercase text-[#00F5B8]"
+              style={{ fontSize: 'clamp(10px, 0.85vw, 12px)' }}
+            >
+              Performance Marketing
+            </span>
+            <span
+              className="font-mono tracking-[0.22em]"
+              style={{ fontSize: 'clamp(9px, 0.75vw, 11px)', color: 'rgba(255,255,255,0.20)' }}
+            >
+              // 2026
+            </span>
           </div>
         </TextLayer>
 
-        {/* CENTER — Name (medium layer, −90 px max drift) */}
+        {/* LAYER 1 — Left: "I build digital experiences." */}
         <TextLayer
           scrollYProgress={scrollYProgress}
-          visibleRange={[0.45, 0.92]}
-          driftPx={90}
-          align="center"
-          bottom="11vh"
-        >
-          <h1
-            className="font-sans font-extrabold text-white leading-none"
-            style={{ fontSize: 'clamp(36px, 8.5vw, 120px)', letterSpacing: '-0.035em' }}
-          >
-            <span className="bg-gradient-to-r from-[#00F5B8] to-[#6bffd6] bg-clip-text text-transparent">
-              SK
-            </span>
-            {' '}Alif Hosain
-          </h1>
-        </TextLayer>
-
-        {/* RIGHT — Role (fast layer, −120 px max drift) */}
-        <TextLayer
-          scrollYProgress={scrollYProgress}
-          visibleRange={[0.64, 0.92]}
-          driftPx={120}
-          align="right"
-          bottom="6vh"
-          right="5vw"
+          visibleRange={[0.28, 0.86]}
+          driftPx={56}
+          style={{ bottom: '34vh', left: '5vw', maxWidth: 'min(42vw, 520px)' }}
         >
           <p
-            className="font-mono font-medium tracking-[0.32em] uppercase text-white/50"
-            style={{ fontSize: 'clamp(12px, 1.5vw, 18px)' }}
+            className="font-extrabold leading-[1.06] text-white"
+            style={{
+              fontSize: 'clamp(24px, 3.8vw, 54px)',
+              letterSpacing: '-0.025em',
+              textShadow: '0 2px 32px rgba(0,0,0,0.75)',
+            }}
           >
-            Affiliate Marketer
+            I build<br />
+            <span style={{ color: '#00F5B8' }}>digital</span>{' '}
+            experiences.
           </p>
         </TextLayer>
 
-        {/* ── HUD — top-left ── */}
-        <div className="absolute top-6 left-6 z-10 font-mono text-xs tracking-widest uppercase pointer-events-none select-none">
-          <span ref={phaseSpanRef} className="text-white">LOADING</span>
-          {' '}
-          <span className="text-white/30">// frame.seq</span>
+        {/* LAYER 2 — Center: "Alif Hosain. Affiliate Marketer." */}
+        <TextLayer
+          scrollYProgress={scrollYProgress}
+          visibleRange={[0.42, 0.90]}
+          driftPx={94}
+          style={{ bottom: '16vh', left: 0, right: 0, textAlign: 'center' }}
+        >
+          <h1
+            className="font-extrabold text-white"
+            style={{
+              fontSize: 'clamp(46px, 9.5vw, 136px)',
+              letterSpacing: '-0.038em',
+              lineHeight: 0.90,
+              textShadow: '0 4px 44px rgba(0,0,0,0.65)',
+            }}
+          >
+            <span
+              style={{
+                background: 'linear-gradient(122deg, #00F5B8 0%, #7fffd9 55%, #00cca2 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+              }}
+            >
+              Alif
+            </span>{' '}
+            Hosain.
+          </h1>
+          <p
+            className="font-mono font-medium tracking-[0.30em] uppercase"
+            style={{
+              fontSize: 'clamp(11px, 1.35vw, 18px)',
+              color: 'rgba(255,255,255,0.36)',
+              marginTop: '0.55em',
+            }}
+          >
+            Affiliate Marketer.
+          </p>
+        </TextLayer>
+
+        {/* LAYER 3 — Right: "Bridging design and engineering." */}
+        <TextLayer
+          scrollYProgress={scrollYProgress}
+          visibleRange={[0.62, 0.90]}
+          driftPx={126}
+          style={{
+            bottom: '7vh',
+            right: '5vw',
+            textAlign: 'right',
+            maxWidth: 'min(38vw, 420px)',
+          }}
+        >
+          <p
+            className="font-extrabold leading-[1.08] text-white"
+            style={{
+              fontSize: 'clamp(20px, 3vw, 42px)',
+              letterSpacing: '-0.022em',
+              textShadow: '0 2px 32px rgba(0,0,0,0.75)',
+            }}
+          >
+            Bridging brands<br />
+            <span style={{ color: '#FF7A18' }}>and performance.</span>
+          </p>
+        </TextLayer>
+
+        {/* ── HUD top-left — minimal branding ── */}
+        <div className="absolute top-6 left-6 z-10 pointer-events-none select-none">
+          <span className="font-mono text-[9px] tracking-[0.32em] uppercase text-white/16">A.H. Portfolio</span>
         </div>
 
-        {/* ── HUD — top-right ── */}
-        <div className="absolute top-6 right-6 z-10 font-mono text-xs tracking-widest uppercase text-right pointer-events-none select-none">
-          {'FRAME '}
-          <span ref={frameSpanRef} className="text-[#00F5B8]">000</span>
-          {' '}
-          <span className="text-white/30">/ 075</span>
+        {/* ── HUD top-right — frame counter ── */}
+        <div className="absolute top-6 right-6 z-10 font-mono text-[9px] tracking-[0.24em] uppercase text-right pointer-events-none select-none">
+          <span ref={frameNumRef} className="text-[#00F5B8]/70">00</span>
+          <span className="text-white/16"> / {String(TOTAL - 1).padStart(2, '0')}</span>
         </div>
 
         {/* ── Vertical progress track ── */}
-        <div className="absolute right-6 top-1/2 -translate-y-1/2 z-10 w-px h-40 bg-white/10 rounded overflow-hidden pointer-events-none">
+        <div className="absolute right-6 top-1/2 -translate-y-1/2 z-10 w-px h-32 rounded overflow-hidden pointer-events-none bg-white/8">
           <motion.div
             className="w-full rounded bg-gradient-to-b from-[#00F5B8] to-[#FF7A18]"
-            style={{
-              height: progressH,
-              boxShadow: '0 0 12px rgba(0,245,184,0.6)',
-            }}
+            style={{ height: progressH, boxShadow: '0 0 9px rgba(0,245,184,0.44)' }}
           />
         </div>
 
-        {/* ── Scroll cue ── */}
+        {/* ── Scroll cue — fades within first 7% of scroll ── */}
         <motion.div
           style={{ opacity: cueOpacity }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2.5 pointer-events-none select-none"
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-3 pointer-events-none select-none"
         >
-          <div className="relative w-6 h-9 rounded-xl border border-white/30">
+          <div className="relative w-6 h-9 rounded-[14px] border border-white/22">
+            {/* dot driven by cueScroll keyframe defined in globals.css */}
             <span
-              className="absolute left-1/2 top-1.5 w-0.5 h-1.5 rounded-full bg-[#00F5B8]"
+              className="absolute left-1/2 top-[6px] w-[3px] h-[7px] rounded-full bg-[#00F5B8]"
               style={{ animation: 'cueScroll 1.6s ease-in-out infinite' }}
             />
           </div>
-          <span className="font-mono text-[11px] tracking-[0.34em] uppercase text-white/50">Scroll</span>
+          <span className="font-mono text-[9px] tracking-[0.42em] uppercase text-white/26">Scroll</span>
         </motion.div>
 
-      </div>
+      </motion.div>
     </section>
   );
-}
-
-/* ─────────────────────────────────────────────────────────────
-   Helpers
-───────────────────────────────────────────────────────────── */
-function phaseLabel(p: number): string {
-  if (p < 0.15) return 'BOOT';
-  if (p < 0.40) return 'SCRUB';
-  if (p < 0.72) return 'RENDER';
-  if (p < 0.90) return 'REVEAL';
-  return 'COMPLETE';
 }
