@@ -1,2 +1,8 @@
+node_modules/
+.next/
+.env*.local
+*.tsbuildinfo
+.DS_Store
+
 .claude/
 SK Alif Hosain Portfolio (offline).html
